@@ -168,4 +168,15 @@ export class OrderDetailComponent implements OnInit {
       }
     });
   }
+
+  downloadAttachment(fileId: string, fileName: string): void {
+    this.orderService.downloadAttachment(fileId).subscribe(blob => {
+      const a = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
 }

@@ -55,6 +55,9 @@
       <tr *ngFor="let file of existingAttachments">
         <td>{{ file.fileName }}</td>
         <td class="text-end">
+          <button class="btn btn-sm btn-primary me-2" (click)="downloadAttachment(file.attachmentId, file.fileName)">
+            Download
+          </button>
           <button class="btn btn-sm btn-danger" (click)="deleteAttachment(file.attachmentId)">
             Delete
           </button>
