@@ -1,0 +1,222 @@
+<!-- Create Button (only for roles that can create) -->
+<button  *ngIf="canCreate() && showCreateButton" class="btn btn-primary mb-3" (click)="openCreateModal(createModal)">
+  + Create Order
+</button>
+
+<!-- Modal -->
+<ng-template #createModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center">
+    <h5 class="modal-title mb-0">Create Order</h5>
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-secondary rounded-circle px-2 py-1"
+      (click)="modal.dismiss()"
+      aria-label="Close"
+      style="font-size: 1.2rem; line-height: 1;"
+    >
+      &times;
+    </button>
+  </div>
+
+
+  <form (ngSubmit)="submitOrder(modal)">
+    <div class="modal-body">
+      <!-- Order Name -->
+      <div class="form-group">
+        <label>Order Title</label>
+        <input type="text" class="form-control" [(ngModel)]="newOrder.name" name="orderName" required />
+      </div>
+
+      <!-- File Upload -->
+      <div class="form-group">
+        <label>Upload Files</label>
+        <input type="file" class="form-control" (change)="handleFileUpload($event)" [multiple]="true" />
+      </div>
+
+      <!-- Charge -->
+      <div class="form-group">
+        <label>Charge</label>
+        <input
+          type="number"
+          class="form-control"
+          [(ngModel)]="newOrder.charge"
+          name="charge"
+          [readonly]="userRole === 'User'"
+        />
+      </div>
+
+      <!-- User Assign (only for ItSupport/Manager) -->
+      <div class="form-group position-relative" *ngIf="userRole === 'ItSupport' || userRole === 'Manager'">
+        <label>Assign to User</label>
+
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search user by email"
+          [(ngModel)]="userSearchInput"
+          (input)="searchUsers()"
+          name="assignedUser"
+          autocomplete="off"
+        />
+
+        <!-- Dropdown -->
+        <ul
+          class="list-group position-absolute w-100 shadow"
+          style="z-index: 1055; top: 100%; max-height: 200px; overflow-y: auto"
+          *ngIf="filteredUsers.length"
+        >
+          <li
+            class="list-group-item list-group-item-action"
+            *ngFor="let user of filteredUsers"
+            (click)="selectUser(user)"
+            style="cursor: pointer"
+          >
+            {{ user.email }}
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-success">Submit</button>
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    </div>
+  </form>
+</ng-template>
+
+
+<div class="col-md-12">
+  <h5 class="mb-3">Recent Orders</h5>
+
+  <div class="card tbl-card">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+        <!-- Filter Row -->
+        <tr>
+          <th>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              placeholder="Search Description"
+              [(ngModel)]="filters.name"
+              (ngModelChange)="applyFilters()"
+            />
+          </th>
+          <th>
+            <select
+              class="form-control form-control-sm"
+              [(ngModel)]="filters.status"
+              (ngModelChange)="applyFilters()"
+            >
+              <option value="">All Statuses</option>
+              <option *ngFor="let key of statusOptions" [value]="key">
+                {{ statusLabel[key] }}
+              </option>
+            </select>
+          </th>
+          <th>
+            <input
+              type="text"
+              class="form-control form-control-sm text-end"
+              placeholder="Search Amount"
+              [(ngModel)]="filters.totalAmount"
+              (ngModelChange)="applyFilters()"
+            />
+          </th>
+
+          @if (userRole === 'ItSupport' || userRole === 'Manager') {
+            <th>
+              <select
+                class="form-control form-control-sm"
+                [(ngModel)]="filters.userEmail"
+                (ngModelChange)="applyFilters()"
+              >
+                <option value="">All Users</option>
+                <option *ngFor="let user of userEmails">{{ user }}</option>
+              </select>
+            </th>
+          }
+
+          <th></th>
+        </tr>
+
+        <!-- Header Row -->
+        <tr>
+          <th>Order Description</th>
+          <th>Status</th>
+          <th class="text-end">TOTAL AMOUNT</th>
+
+          @if (userRole === 'ItSupport' || userRole === 'Manager') {
+            <th>User</th>
+          }
+
+          <th class="text-end">Action</th>
+        </tr>
+        </thead>
+
+        <tbody>
+          @for (order of paginatedOrders; track order) {
+            <tr>
+              <td>{{ order.name }}</td>
+              <td>
+                <span class="d-block">
+                  <i class="badge-circle {{ statusBadgeClass[order.status] }} f-10 m-r-5"></i>
+                  {{ statusLabel[order.status] }}
+                </span>
+              </td>
+              <td class="text-end">{{ order.totalAmount }}</td>
+
+              @if (userRole === 'ItSupport' || userRole === 'Manager') {
+                <td>{{ userIdToEmail[order.userId] }}</td>
+              }
+
+              <td class="text-end">
+                <button class="btn btn-outline-primary btn-sm" (click)="viewOrder(order.id)">
+                  View
+                </button>
+              </td>
+            </tr>
+          }
+
+        <tr *ngIf="paginatedOrders.length === 0">
+          <td colspan="5" class="text-center text-muted">No orders found</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center mt-3 px-3 pb-3">
+      <div class="text-muted">
+        Showing
+        {{ (page - 1) * pageSize + 1 }} -
+        {{ Math.min(page * pageSize, filteredOrders.length) }}
+        of {{ filteredOrders.length }}
+      </div>
+
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="page === 1">
+            <a class="page-link" href="javascript:void(0)" (click)="page = page - 1">Previous</a>
+          </li>
+
+          <li
+            class="page-item"
+            *ngFor="let pg of [].constructor(totalPages); let i = index"
+            [class.active]="page === i + 1"
+          >
+            <a class="page-link" href="javascript:void(0)" (click)="page = i + 1">{{ i + 1 }}</a>
+          </li>
+
+          <li class="page-item" [class.disabled]="page >= totalPages">
+            <a class="page-link" href="javascript:void(0)" (click)="page = page + 1">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,73 @@
+<ul class="list-unstyled">
+  <li class="pc-h-item">
+    <a href="https://github.com/codedthemes/mantis-free-angular-admin-template" target="_blank" class="pc-head-link me-0 bg-gray-200">
+      <i antIcon type="github" theme="outline"></i>
+    </a>
+  </li>
+  <li class="dropdown pc-h-item" ngbDropdown>
+    <a href="javascript:" class="pc-head-link dropdown-toggle arrow-none me-0 bg-gray-200" data-bs-toggle="dropdown" ngbDropdownToggle>
+      <i antIcon type="bell" theme="outline"></i>
+      <span class="badge bg-primary pc-h-badge">{{productionQueue.length}}</span>
+    </a>
+    <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown" ngbDropdownMenu>
+      <div class="dropdown-header d-flex align-items-center justify-content-between">
+        <h5 class="m-0">Notification</h5>
+        <a class="bg-transparent"><i class="text-success d-flex f-20" antIcon theme="outline" type="check-circle"></i></a>
+      </div>
+      <div class="dropdown-divider mb-0"></div>
+      <ng-scrollbar style="min-height: 280px" visibility="hover">
+        <div class="dropdown-header p-0 text-wrap header-notification-scroll">
+          <div class="list-group list-group-flush w-100">
+            <a
+              class="list-group-item list-group-item-action"
+              *ngFor="let item of productionQueue"
+              (click)="goToOrder(item.orderId)"
+            >
+              <div class="d-flex">
+                <div class="flex-shrink-0">
+                  <div class="user-avatar bg-light-warning">
+                    <i class="d-flex" antIcon theme="outline" type="setting"></i>
+                  </div>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                  <span class="float-end text-muted">{{ item.createdAt | date: 'shortTime' }}</span>
+                  <p class="text-body mb-1">
+                    Order <b>{{ item.name }}</b> is queued for production.
+                  </p>
+                  <span class="text-muted">{{ item.createdAt | date: 'short' }}</span>
+                </div>
+              </div>
+            </a>
+
+          </div>
+        </div>
+      </ng-scrollbar>
+      <div class="dropdown-divider mt-0"></div>
+      <div class="text-center py-2">
+        <a href="javascript:" class="link-primary">View all</a>
+      </div>
+    </div>
+  </li>
+  <li class="dropdown pc-h-item header-user-profile" ngbDropdown>
+    <a href="javascript:" class="pc-head-link dropdown-toggle arrow-none me-0" ngbDropdownToggle>
+      <img src="assets/images/user/avatar-2.jpg" alt="user-image" class="user-avatar me-2" />
+      <span class="f-w-600">John Doe</span>
+    </a>
+    <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown" ngbDropdownMenu>
+      <div class="dropdown-header">
+        <div class="d-flex mb-1">
+          <div class="flex-shrink-0">
+            <img src="assets/images/user/avatar-2.jpg" alt="user-image" class="user-avatar wid-35" />
+          </div>
+          <div class="flex-grow-1 ms-3 text-start">
+            <h6 class="mb-0">{{ userEmail }}</h6>
+            <span>{{ userRole }}</span>
+          </div>
+          <a (click)="logout()" class="bg-transparent" title="Logout">
+            <i class="d-flex f-20" antIcon theme="outline" type="logout"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </li>
+</ul>

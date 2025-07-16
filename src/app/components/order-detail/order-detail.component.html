@@ -1,0 +1,126 @@
+<div class="container mt-4">
+
+  <!-- Creation date -->
+  <div class="mb-2">
+    <strong>Created:</strong> {{ order.createdAt | date: 'short' }}
+  </div>
+
+  <!-- Status badge -->
+  <div class="mb-3">
+    <strong>Status:</strong>
+    <span class="badge" [ngClass]="statusBadgeClass[order.status]">
+      {{ statusLabel[order.status] }}
+    </span>
+  </div>
+
+  <!-- Total Charge -->
+  <div class="mb-3">
+    <label for="totalAmount" class="form-label">Total Charge</label>
+
+    <!-- Readonly always for User, and also for IT/Manager if Paid or In Production -->
+    <input
+      *ngIf="userRole === 'User' || order.status === orderStatus.Paid || order.status === orderStatus.InProduction; else editableAmount"
+      id="totalAmount"
+      type="text"
+      class="form-control"
+      [value]="'$' + order.totalAmount.toFixed(2)"
+      readonly
+    />
+
+    <!-- Editable only when status is Created and user is ItSupport/Manager -->
+    <ng-template #editableAmount>
+      <input
+        id="totalAmount"
+        type="number"
+        class="form-control"
+        [(ngModel)]="order.totalAmount"
+        name="totalAmount"
+        min="0"
+        step="0.01"
+      />
+    </ng-template>
+  </div>
+
+  <!-- Attachments -->
+  <h5>Attachments</h5>
+  <div class="table-responsive mb-3">
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>File Name</th>
+        <th class="text-end">Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let file of existingAttachments">
+        <td>{{ file.fileName }}</td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-danger" (click)="deleteAttachment(file.attachmentId)">
+            Delete
+          </button>
+        </td>
+      </tr>
+
+      <tr *ngFor="let file of pendingAttachments">
+        <td>{{ file.name }} <span class="text-muted">(unsaved)</span></td>
+        <td class="text-end">
+          <button class="btn btn-sm btn-danger" (click)="deleteAttachment(file.name, true)">
+            Remove
+          </button>
+        </td>
+      </tr>
+
+      <tr *ngIf="existingAttachments.length === 0 && pendingAttachments.length === 0">
+        <td colspan="2" class="text-center text-muted">No attachments</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Upload new attachments -->
+  <div class="mb-3">
+    <label for="fileUpload" class="form-label">Add Attachments</label>
+    <input
+      id="fileUpload"
+      type="file"
+      class="form-control"
+      (change)="handleFileSelect($event)"
+      multiple
+    />
+  </div>
+
+  <!-- Action buttons -->
+  <div class="text-end">
+
+    <!-- Save allowed for Created, Paid, In Production -->
+    <button
+A      class="btn btn-success me-2"
+      (click)="saveOrder()">
+      Save
+    </button>
+
+    <!-- Mark as Paid (only for Created and role = ItSupport/Manager) -->
+    <button
+      *ngIf="order.status === orderStatus.Created && (userRole === 'ItSupport' || userRole === 'Manager')"
+      class="btn btn-warning me-2"
+      (click)="markAsPaid()">
+      Mark as Paid
+    </button>
+
+    <!-- Check Out (only when Created) -->
+    <button
+      *ngIf="order.status !== orderStatus.Paid && order.status !== orderStatus.InProduction"
+      class="btn btn-outline-primary me-2"
+      (click)="checkOutOrder()">
+      Check Out
+    </button>
+
+    <!-- Push to Production (only when Paid) -->
+    <button
+      *ngIf="order.status === orderStatus.Paid && (userRole === 'ItSupport' || userRole === 'Manager')"
+      class="btn btn-outline-dark"
+      (click)="pushToProduction()">
+      Push to Production
+    </button>
+  </div>
+</div>

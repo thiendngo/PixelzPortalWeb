@@ -1,0 +1,99 @@
+<div class="row">
+  @for (analytic of AnalyticEcommerce; track analytic) {
+    <div class="col-md-6 col-xl-3">
+      <app-card [showHeader]="false" blockClass="dashboard-card">
+        <h6 class="mb-2 f-w-400 text-muted">{{ analytic.title }}</h6>
+        <h4 class="mb-3">
+          {{ analytic.amount }}
+          <span class="badge {{ analytic.background }} border {{ analytic.border }} ">
+            <i antIcon type="{{ analytic.icon }}" theme="outline"></i>
+            {{ analytic.percentage }}
+          </span>
+        </h4>
+        <p class="mb-0 text-muted text-sm">
+          @if (userRole === 'User') {
+            You spent
+            <span class="{{ analytic.color }}">{{ analytic.number }}</span>
+            this year
+          } @else {
+            You made an extra
+            <span class="{{ analytic.color }}">{{ analytic.number }}</span>
+            this year
+          }
+        </p>
+      </app-card>
+    </div>
+  }
+
+</div>
+<app-orders [showCreateButton]="false"></app-orders>
+<div class="row">
+  <div class="col-md-12 col-xl-4">
+    <h5 class="mb-3">Transaction History</h5>
+    <div class="card">
+      <div class="list-group list-group-flush">
+        @if (recentOrders.length > 0) {
+          @for (order of recentOrders; track order) {
+            <a href="javascript:" class="list-group-item list-group-item-action px-3">
+              <div class="d-flex">
+                <!-- Avatar Icon -->
+                <div class="flex-shrink-0">
+                  <div
+                    class="avatar avatar-s rounded-circle"
+                    [ngClass]="getOrderStatusBadge(order.status)"
+                  >
+                    <i
+                      class="f-16"
+                      antIcon
+                      [type]="getOrderStatusIcon(order.status)"
+                      theme="outline"
+                    ></i>
+                  </div>
+                </div>
+
+                <!-- Order Info -->
+                <div class="flex-grow-1 ms-3">
+                  <h6 class="mb-1">Order #{{ order.id.slice(0, 8) }}</h6>
+                  <p class="mb-0 text-muted">{{ order.createdAt | date: 'short' }}</p>
+                </div>
+
+                <!-- Amount + Status -->
+                <div class="flex-shrink-0 text-end">
+                  <h6 class="mb-1">{{ order.totalAmount | currency }}</h6>
+                  <p class="mb-0 text-muted">{{ statusLabel[order.status] }}</p>
+                </div>
+              </div>
+            </a>
+          }
+        } @else {
+          <div class="text-center text-muted p-3">No recent orders found</div>
+        }
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="row justify-content-between">
+          <div class="col-auto">
+            <h5>Help & Support Chat</h5>
+            <p class="mb-3">Typical replay within 5 min</p>
+          </div>
+          <div class="col-auto">
+            <div class="user-group mb-3">
+              <img src="assets/images/user/avatar-1.jpg" alt="image" />
+              <img src="assets/images/user/avatar-2.jpg" alt="image" />
+              <img src="assets/images/user/avatar-3.jpg" alt="image" />
+            </div>
+          </div>
+        </div>
+        <div class="d-grid">
+          <div class="btn btn-primary">Need Help?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- [ sample-page ] end -->
+</div>
