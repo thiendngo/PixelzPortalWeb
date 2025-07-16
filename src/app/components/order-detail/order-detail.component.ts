@@ -5,6 +5,7 @@ import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthenticationService } from '../../services/auth';
 import { forkJoin, Observable } from 'rxjs';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-order-detail',
@@ -53,7 +54,8 @@ export class OrderDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private orderService: OrderService,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -115,6 +117,7 @@ export class OrderDetailComponent implements OnInit {
     // Run all tasks in parallel
     forkJoin(tasks).subscribe({
       next: () => {
+        this.toast.success("Order saved!")
         this.pendingAttachments = [];
         this.loadOrder();
       },
@@ -127,12 +130,14 @@ export class OrderDetailComponent implements OnInit {
   checkOutOrder(): void {
     this.orderService.checkOut(this.orderId).subscribe({
       next: () => {
+        this.toast.success('Order Paid!');
         this.loadOrder();
         // optionally refresh order data
       },
       error: (err) => {
         this.loadOrder();
-        console.error('Checkout failed', err);
+        this.toast.error(err.error);
+
         // optionally show toast or error message
       }
     });
@@ -141,12 +146,11 @@ export class OrderDetailComponent implements OnInit {
   pushToProduction(): void {
     this.orderService.pushToProduction(this.orderId).subscribe({
       next: () => {
-        alert('Order successfully pushed to production.');
+        this.toast.success('Order successfully pushed to production.');
         this.loadOrder();
       },
       error: (err) => {
-        console.error('Push failed:', err);
-        alert('Failed to push order to production.');
+        this.toast.error(err.error);
       }
     });
   }
@@ -156,7 +160,9 @@ export class OrderDetailComponent implements OnInit {
 
     this.orderService.markOrderAsPaid(this.order.id).subscribe({
       next: (res) => {
-        this.order.status = 4; // InProduction
+        this.toast.success('Order successfully pushed to production.');
+        this.loadOrder();
+
       },
       error: (err) => {
       }
