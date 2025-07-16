@@ -30,3 +30,14 @@ node bridge.js
 
 ## Order List
 - Users can filter all the orders by name, status, etc.
+
+## Testing Order
+
+### To Test kafka and notification
+- Create order with name includes `"fail"` in the string.
+- Try making payment using Check-Out will always fail this order.
+  - Order is paid, but always fails to push to production
+  - Notification icon will be notified immediately and show the items in ProductionQueue.
+- Click Push-To-Production button will resolve the order, change order status to `InProduction`, and remove the notification item.
+
+

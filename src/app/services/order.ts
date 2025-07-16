@@ -96,7 +96,9 @@ export class OrderService {
     return this.http.get<ProductionQueueItem[]>(`${this.productionQueueUrl}`);
   }
 
-
+  markOrderAsPaid(orderId: string): Observable<any> {
+    return this.http.post(`${this.ordersUrl}/${orderId}/mark-paid`, {});
+  }
 
 }
 

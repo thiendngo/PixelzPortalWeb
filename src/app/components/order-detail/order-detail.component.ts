@@ -151,7 +151,15 @@ export class OrderDetailComponent implements OnInit {
     });
   }
 
-  markAsPaid() {
+  markAsPaid(): void {
+    if (!this.order?.id) return;
 
+    this.orderService.markOrderAsPaid(this.order.id).subscribe({
+      next: (res) => {
+        this.order.status = 4; // InProduction
+      },
+      error: (err) => {
+      }
+    });
   }
 }
