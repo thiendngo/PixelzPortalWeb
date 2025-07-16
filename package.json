@@ -1,7 +1,7 @@
 {
-  "name": "mantis-free-angular-admin-template",
-  "version": "5.2.0",
-  "author": "CodedThemes",
+  "name": "PixelzPortal",
+  "version": "1.0.0",
+  "author": "Thien Ngo",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -61,7 +61,6 @@
     "typescript": "5.8.3"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
-  "description": "[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Price](https://img.shields.io/badge/price-FREE-0098f7.svg)](https://github.com/codedthemes/mantis-free-angular-admin-template/blob/master/LICENSE) [![GitHub package version](https://img.shields.io/github/package-json/v/codedthemes/mantis-free-angular-admin-template)](https://github.com/codedthemes/mantis-free-angular-admin-template/) [![Download ZIP](https://img.shields.io/badge/Download-ZIP-blue?style=flat-square&logo=github)](https://codedthemes.com/item/mantis-angular-free-admin-template/) [![Join Discord](https://img.shields.io/badge/Join-Discord-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.com/invite/p2E2WhCb6s)",
   "main": "index.js",
   "keywords": []
 }
